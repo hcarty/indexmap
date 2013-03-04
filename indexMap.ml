@@ -101,7 +101,7 @@ let of_function ?mem ~set ~get =
   in
   let set =
     match set with
-    | Immutable -> assert false
+    | Immutable -> (fun _i _x -> assert false)
     | Mutable f -> f
   in
   { get; mem; set }
