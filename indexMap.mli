@@ -35,6 +35,12 @@ val map : ('i, 'e, [`i]) t -> ('e -> 'e_new) -> ('i, 'e_new, [`i]) t
 (** [map imap f] returns a new {!t} based on [imap] with each element
     transformed by [f]. *)
 
+val xmap :
+  ('i, 'e, 'm) t -> ('e -> 'e_new) -> ('e_new -> 'e) -> ('i, 'e_new, 'm) t
+(** [xmap imap f_to f_from] returns a new {!t} based on [imap] with each element
+    transformed by [f_to].  [f_from] is used to propagate {!set} calls back
+    through the index chain. *)
+
 val map_index : ('i, 'e, 'm) t -> ('i_new -> 'i) -> ('i_new, 'e, 'm) t
 (** [map_index imap f] returns a new {!t} based on [imap].  The index is
     transformed by [f]. *)
