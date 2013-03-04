@@ -43,6 +43,12 @@ let map index f = {
     set = (fun _i _x -> assert false);
 }
 
+let xmap index f_to f_from = {
+  index with
+    get = (fun i -> f_to (index.get i));
+    set = (fun i x -> index.set i (f_from x));
+}
+
 let map_index index f = {
   get = (fun i -> index.get (f i));
   set = (fun i x -> index.set (f i) x);
