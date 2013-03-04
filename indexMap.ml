@@ -38,9 +38,6 @@ let of_array a =
   let mem i = i >= 0 && i < length in
   { mem; get = (fun i -> Array.get a i) }
 
-let of_arrays a =
-  make ~get:(fun a (i, j) -> a.(i).(j)) a
-
 (* No custom mem functions for bigarrays because of the difference in initial
     index between C and Fortran layouts. *)
 let of_array1 a =
@@ -67,6 +64,9 @@ let of_function ?mem get =
     end
   in
   { get; mem }
+
+let of_arrays a =
+  of_function (fun (i, j) -> a.(i).(j))
 
 let to_row_major index ~columns =
   map_index index (fun (i, j) -> i * columns + j)
