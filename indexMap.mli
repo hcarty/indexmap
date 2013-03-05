@@ -1,6 +1,6 @@
 (** {1 IndexMap operations } *)
 
-(** Index maps are lazy wrappers around indexable data sources. *)
+(** Index maps are generic wrappers around indexable data sources. *)
 
 type ('index, 'element, 'permission) t
 (** An mapping of indexes to elements *)
