@@ -30,6 +30,9 @@ val make_rw :
 val get : ('i, 'e, [> `r]) t -> 'i -> 'e
 (** [get imap i] returns the element indexed by [i] from [imap]. *)
 
+val set : ('i, 'e, [> `w]) t -> 'i -> 'e -> unit
+(** [set imap i x] the element indexed by [i] to [x]. *)
+
 val mem : ('i, 'e, 'm) t -> 'i -> bool
 (** [mem imap i] returns [true] if the index [i] is valid. *)
 
