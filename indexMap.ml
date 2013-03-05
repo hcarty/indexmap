@@ -1,15 +1,11 @@
-type ('index, 'element, 'mutability) t = {
+type ('index, 'element, 'permission) t = {
   get : 'index -> 'element;
   set : 'index -> 'element -> unit;
   mem : 'index -> bool;
 }
 
-type ('index, 'element, 'mutability) mutability =
-  | Mutable of ('index -> 'element -> unit)
-  | Immutable
-
-let immut = Immutable
-let mut set = Mutable set
+let fake_get _i = assert false
+let fake_set _i _x = assert false
 
 let mem_default c get i =
   try
@@ -19,19 +15,22 @@ let mem_default c get i =
   | Not_found
   | Invalid_argument _ -> false
 
-let make ?mem ~set ~get container =
+let make ?mem ~get ~set container =
   let mem =
     match mem with
     | Some f -> fun i -> f container i
     | None -> fun i -> mem_default container get i
   in
   let get i = get container i in
-  let set =
-    match set with
-    | Immutable -> assert false
-    | Mutable f -> f
-  in
+  let set i x = set container i x in
   { get; set; mem }
+
+let make_ro ?mem ~get container =
+  make ?mem ~get ~set:fake_set container
+let make_wo ?mem ~set container =
+  make ?mem ~get:fake_get ~set container
+let make_rw ?mem ~get ~set container =
+  make ?mem ~get ~set container
 
 let get { get; _ } i = get i
 let set { set; _ } i x = set i x
@@ -55,7 +54,7 @@ let map_index index f = {
   mem = (fun i -> index.mem (f i));
 }
 
-external to_immutable : ('i, 'e, 'm) t -> ('i, 'e, [`i]) t = "%identity"
+external to_immutable : ('i, 'e, 'm) t -> ('i, 'e, [`r]) t = "%identity"
 
 let of_array a =
   let length = Array.length a in
@@ -65,27 +64,27 @@ let of_array a =
 (* No custom mem functions for bigarrays because of the difference in initial
     index between C and Fortran layouts. *)
 let of_array1 a =
-  make
-    ~set:(Mutable (fun i x -> Bigarray.Array1.set a i x))
+  make_rw
+    ~set:Bigarray.Array1.set
     ~get:Bigarray.Array1.get
     a
 let of_array2 a =
-  make
-    ~set:(Mutable (fun (i, j) x -> Bigarray.Array2.set a i j x))
+  make_rw
+    ~set:(fun a (i, j) x -> Bigarray.Array2.set a i j x)
     ~get:(fun a (i, j) -> Bigarray.Array2.get a i j)
     a
 let of_array3 a =
-  make
-    ~set:(Mutable (fun (i, j, k) x -> Bigarray.Array3.set a i j k x))
+  make_rw
+    ~set:(fun a (i, j, k) x -> Bigarray.Array3.set a i j k x)
     ~get:(fun a (i, j, k) -> Bigarray.Array3.get a i j k)
     a
 let of_genarray a =
-  make
-    ~set:(Mutable (fun i x -> Bigarray.Genarray.set a i x))
+  make_rw
+    ~set:Bigarray.Genarray.set
     ~get:Bigarray.Genarray.get
     a
 
-let of_function ?mem ~set ~get =
+let of_function ?mem ~get ~set =
   let mem =
     match mem with
     | Some f -> f
@@ -99,17 +98,19 @@ let of_function ?mem ~set ~get =
         | Invalid_argument _ -> false
     end
   in
-  let set =
-    match set with
-    | Immutable -> (fun _i _x -> assert false)
-    | Mutable f -> f
-  in
   { get; mem; set }
 
+let of_function_ro ?mem ~get =
+  of_function ?mem ~get ~set:fake_set
+let of_function_wo ?mem ~set =
+  of_function ?mem ~set ~get:fake_get
+let of_function_rw ?mem ~get ~set =
+  of_function ?mem ~get ~set
+
 let of_arrays a =
-  of_function
+  of_function_rw
     ?mem:None
-    ~set:(Mutable (fun (i, j) x -> a.(i).(j) <- x))
+    ~set:(fun (i, j) x -> a.(i).(j) <- x)
     ~get:(fun (i, j) -> a.(i).(j))
 
 let to_row_major index ~columns =
