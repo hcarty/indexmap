@@ -33,7 +33,7 @@ val get : ('i, 'e, [> `r]) t -> 'i -> 'e
 val set : ('i, 'e, [> `w]) t -> 'i -> 'e -> unit
 (** [set imap i x] the element indexed by [i] to [x]. *)
 
-val mem : ('i, 'e, 'm) t -> 'i -> bool
+val mem : ('i, 'e, 'p) t -> 'i -> bool
 (** [mem imap i] returns [true] if the index [i] is valid. *)
 
 val map : ('i, 'e, [`r]) t -> ('e -> 'e_new) -> ('i, 'e_new, [`r]) t
@@ -41,16 +41,16 @@ val map : ('i, 'e, [`r]) t -> ('e -> 'e_new) -> ('i, 'e_new, [`r]) t
     transformed by [f]. *)
 
 val xmap :
-  ('i, 'e, 'm) t -> ('e -> 'e_new) -> ('e_new -> 'e) -> ('i, 'e_new, 'm) t
+  ('i, 'e, 'p) t -> ('e -> 'e_new) -> ('e_new -> 'e) -> ('i, 'e_new, 'p) t
 (** [xmap imap f_to f_from] returns a new {!t} based on [imap] with each element
     transformed by [f_to].  [f_from] is used to propagate {!set} calls back
     through the index chain. *)
 
-val map_index : ('i, 'e, 'm) t -> ('i_new -> 'i) -> ('i_new, 'e, 'm) t
+val map_index : ('i, 'e, 'p) t -> ('i_new -> 'i) -> ('i_new, 'e, 'p) t
 (** [map_index imap f] returns a new {!t} based on [imap].  The index is
     transformed by [f]. *)
 
-external to_immutable : ('i, 'e, 'm) t -> ('i, 'e, [`r]) t = "%identity"
+external to_immutable : ('i, 'e, 'p) t -> ('i, 'e, [`r]) t = "%identity"
 (** [to_immutable imap] will return a new version of [imap] which can not be
     modified. *)
 
@@ -77,36 +77,36 @@ val of_function_rw :
     unmodified.  If [container] is mutable then any changes to [container]
     will be reflected in the resulting {!t}. *)
 
-val to_row_major : (int, 'e, 'm) t -> columns:int -> (int * int, 'e, 'm) t
-val to_column_major : (int, 'e, 'm) t -> rows:int -> (int * int, 'e, 'm) t
+val to_row_major : (int, 'e, 'p) t -> columns:int -> (int * int, 'e, 'p) t
+val to_column_major : (int, 'e, 'p) t -> rows:int -> (int * int, 'e, 'p) t
 (** [to_(row|column)_major imap] converts [imap] to use matrix-like indexing.
     Both functions return values with [(i, j)] indexes. *)
 
 module Tuple2 : sig
-  val fix_first : ('i_a * 'i_b, 'e, 'm) t -> 'i_a -> ('i_b, 'e, 'm) t
-  val fix_second : ('i_a * 'i_b, 'e, 'm) t -> 'i_b -> ('i_a, 'e, 'm) t
+  val fix_first : ('i_a * 'i_b, 'e, 'p) t -> 'i_a -> ('i_b, 'e, 'p) t
+  val fix_second : ('i_a * 'i_b, 'e, 'p) t -> 'i_b -> ('i_a, 'e, 'p) t
   (** [fix_* imap i] returns a new {!t} with the specified index element fixed
       to the value [i]. *)
 
-  val transpose : ('i_a * 'i_b, 'e, 'm) t -> ('i_b * 'i_a, 'e, 'm) t
+  val transpose : ('i_a * 'i_b, 'e, 'p) t -> ('i_b * 'i_a, 'e, 'p) t
     (** [transpose imap] returns a new {!t} with the index elements flipped. *)
 end
 module Tuple3 : sig
   val fix_first :
-    ('i_a * 'i_b * 'i_c, 'e, 'm) t -> 'i_a -> ('i_b * 'i_c, 'e, 'm) t
+    ('i_a * 'i_b * 'i_c, 'e, 'p) t -> 'i_a -> ('i_b * 'i_c, 'e, 'p) t
   val fix_second :
-    ('i_a * 'i_b * 'i_c, 'e, 'm) t -> 'i_b -> ('i_a * 'i_c, 'e, 'm) t
+    ('i_a * 'i_b * 'i_c, 'e, 'p) t -> 'i_b -> ('i_a * 'i_c, 'e, 'p) t
   val fix_third :
-    ('i_a * 'i_b * 'i_c, 'e, 'm) t -> 'i_c -> ('i_a * 'i_b, 'e, 'm) t
+    ('i_a * 'i_b * 'i_c, 'e, 'p) t -> 'i_c -> ('i_a * 'i_b, 'e, 'p) t
   (** [fix_* imap i] returns a new {!t} with the specified index element fixed
       to the value [i]. *)
 
   val fix_first_second :
-    ('i_a * 'i_b * 'i_c, 'e, 'm) t -> 'i_a -> 'i_b -> ('i_c, 'e, 'm) t
+    ('i_a * 'i_b * 'i_c, 'e, 'p) t -> 'i_a -> 'i_b -> ('i_c, 'e, 'p) t
   val fix_first_third :
-    ('i_a * 'i_b * 'i_c, 'e, 'm) t -> 'i_a -> 'i_c -> ('i_b, 'e, 'm) t
+    ('i_a * 'i_b * 'i_c, 'e, 'p) t -> 'i_a -> 'i_c -> ('i_b, 'e, 'p) t
   val fix_second_third :
-    ('i_a * 'i_b * 'i_c, 'e, 'm) t -> 'i_b -> 'i_c -> ('i_a, 'e, 'm) t
+    ('i_a * 'i_b * 'i_c, 'e, 'p) t -> 'i_b -> 'i_c -> ('i_a, 'e, 'p) t
     (** [fix_* imap i] returns a new {!t} with the specified index elements fixed
         to the value [i]. *)
 end
