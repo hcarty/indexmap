@@ -42,6 +42,12 @@ let map index f = {
     set = (fun _i _x -> assert false);
 }
 
+let smap index f = {
+  index with
+    get = (fun _i -> assert false);
+    set = (fun i x -> index.set i (f x));
+}
+
 let xmap index f_to f_from = {
   index with
     get = (fun i -> f_to (index.get i));
@@ -54,7 +60,8 @@ let map_index index f = {
   mem = (fun i -> index.mem (f i));
 }
 
-external to_immutable : ('i, 'e, 'm) t -> ('i, 'e, [`r]) t = "%identity"
+external to_read_only : ('i, 'e, [> `r]) t -> ('i, 'e, [`r]) t = "%identity"
+external to_write_only : ('i, 'e, [> `w]) t -> ('i, 'e, [`w]) t = "%identity"
 
 let of_array a =
   let length = Array.length a in

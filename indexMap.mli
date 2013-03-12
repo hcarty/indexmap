@@ -40,6 +40,10 @@ val map : ('i, 'e, [`r]) t -> ('e -> 'e_new) -> ('i, 'e_new, [`r]) t
 (** [map imap f] returns a new {!t} based on [imap] with each element
     transformed by [f]. *)
 
+val smap : ('i, 'e, [`w]) t -> ('e_new -> 'e) -> ('i, 'e_new, [`w]) t
+(** [smap imap f] returns a new {!t} based on [imap] with each element
+    transformed by [f]. *)
+
 val xmap :
   ('i, 'e, 'p) t -> ('e -> 'e_new) -> ('e_new -> 'e) -> ('i, 'e_new, 'p) t
 (** [xmap imap f_to f_from] returns a new {!t} based on [imap] with each element
@@ -50,9 +54,13 @@ val map_index : ('i, 'e, 'p) t -> ('i_new -> 'i) -> ('i_new, 'e, 'p) t
 (** [map_index imap f] returns a new {!t} based on [imap].  The index is
     transformed by [f]. *)
 
-external to_immutable : ('i, 'e, 'p) t -> ('i, 'e, [`r]) t = "%identity"
-(** [to_immutable imap] will return a new version of [imap] which can not be
+external to_read_only : ('i, 'e, [> `r]) t -> ('i, 'e, [`r]) t = "%identity"
+(** [to_read_only imap] will return a new version of [imap] which can not be
     modified. *)
+
+external to_write_only : ('i, 'e, [> `w]) t -> ('i, 'e, [`w]) t = "%identity"
+(** [to_write_only imap] will return a new version of [imap] which can not be
+    read. *)
 
 val of_array : 'e array -> (int, 'e, [`r | `w]) t
 val of_arrays : 'e array array -> (int * int, 'e, [`r | `w]) t
