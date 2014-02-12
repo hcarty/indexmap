@@ -1,5 +1,5 @@
 # OASIS_START
-# DO NOT EDIT (digest: c3cbcff2e84563bce4515de2f99e3768)
+# DO NOT EDIT (digest: 169c2b993628ba10749256828cd6a320)
 # Ignore VCS directories, you can use the same kind of rule outside
 # OASIS_START/STOP if you want to exclude directories that contains
 # useless stuff for the build process
@@ -15,4 +15,5 @@
 "_darcs": not_hygienic
 # Library indexMap
 "src/indexMap.cmxs": use_indexMap
+<src/*.ml{,i}>: pkg_bigarray
 # OASIS_STOP

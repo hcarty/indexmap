@@ -9,9 +9,10 @@ License:     MIT
 Plugins:     META (0.4)
 
 Library indexMap
-  Path:       src
-  BuildTools: ocamlbuild
-  Modules:    IndexMap
+  Path:         src
+  BuildTools:   ocamlbuild
+  BuildDepends: bigarray
+  Modules:      IndexMap
 
 SourceRepository master
   Type:     git

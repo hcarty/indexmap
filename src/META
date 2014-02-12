@@ -1,7 +1,8 @@
 # OASIS_START
-# DO NOT EDIT (digest: 2fad258a318ae246754914f78e35ce53)
+# DO NOT EDIT (digest: 20c7da1ba6b79b47468bb91d6aa31c57)
 version = "0.0.3"
 description = "Generic indexed data for OCaml"
+requires = "bigarray"
 archive(byte) = "indexMap.cma"
 archive(byte, plugin) = "indexMap.cma"
 archive(native) = "indexMap.cmxa"
