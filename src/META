@@ -1,0 +1,11 @@
+# OASIS_START
+# DO NOT EDIT (digest: 2fad258a318ae246754914f78e35ce53)
+version = "0.0.3"
+description = "Generic indexed data for OCaml"
+archive(byte) = "indexMap.cma"
+archive(byte, plugin) = "indexMap.cma"
+archive(native) = "indexMap.cmxa"
+archive(native, plugin) = "indexMap.cmxs"
+exists_if = "indexMap.cma"
+# OASIS_STOP
+
