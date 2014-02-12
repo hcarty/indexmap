@@ -1,0 +1,19 @@
+OASISFormat: 0.4
+Name:        indexmap
+Version:     0.0.3
+Synopsis:    Generic indexed data for OCaml
+Authors:     Hezekiah M. Carty <hez@0ok.org>
+Maintainers: Hezekiah M. Carty <hez@0ok.org>
+Homepage:    https://github.com/hcarty/indexmap
+License:     MIT
+Plugins:     META (0.4)
+
+Library indexMap
+  Path:       src
+  BuildTools: ocamlbuild
+  Modules:    IndexMap
+
+SourceRepository master
+  Type:     git
+  Location: https://github.com/hcarty/indexmap.git
+  Browser:  https://github.com/hcarty/indexmap 
